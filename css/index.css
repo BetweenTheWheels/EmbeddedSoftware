@@ -1,6 +1,6 @@
-@charset "utf-8";
+
 /* CSS Document */
- 
+
 body{
 /*    font-family: calibri;*/
 /*font-family: 'Hiragino Kaku Gothic Pro','ヒラギノ角ゴ Pro W3','メイリオ',Meiryo,'ＭＳ Ｐゴシック',sans-serif;*/
@@ -9,12 +9,12 @@ font-family: Quicksand, 游ゴシック体, "Yu Gothic", YuGothic, "ヒラギノ
 margin:0;
 color:#313131;
 }
- 
+
 img{
 outline:none;
 border-style:none;
 }
- 
+
 a{
     color:blue;
     -webkit-transition: all 0.5s;
@@ -33,11 +33,11 @@ a:hover {
     -moz-transition: all 0.5s;
     transition: all 0.5s;
 }
- 
+
 /*****HEADER*****/
 header{
     display: block;
-    width:60%;
+    width:80%;
     margin-left: 20%;
     overflow: hidden;
 }
@@ -61,7 +61,7 @@ header p{
     color:#313131;
     float: left;
 }
- 
+
 /*****BRANDING*****/
 #branding{
     display: block;
@@ -78,7 +78,7 @@ header p{
     font-size: 120%;
     padding-left: 3%;
 }
- 
+
 /***** date & version *****/
 #date_version{
     display: block;
@@ -96,7 +96,7 @@ header p{
     font-size: 120%;
     padding-left: 3%;
 }
- 
+
 /*****NAV*****/
 nav{
     width: 100%;
@@ -124,32 +124,32 @@ nav li{
 nav li:last-child{
     border-right: 1px solid orange;
 }
- 
+
 nav li:hover{
     background-color: orange;
     transition: background-color 0.5s ease-out;
     color: #fff;
 }
- 
+
 /*****ARTICLE*****/
-section{
+article{
     display: block;
     width: 80%;
     margin: 20px auto;
     overflow: hidden;
 }
-article{
-    width: calc(90% - 10px);
+section{
+    width: calc(100% - 10px);
     padding: 2.5%;
     margin-bottom: 30px;
     background-color: #f9f9f9;
     overflow: hidden;
     float: left;
 }
-article:nth-child(2n){
+section:nth-child(2n){
     margin-left: 30px;
 }
-article .date{
+section .date{
     font-size: 60%;
     color: orange;
     border: 1px solid orange;
@@ -160,9 +160,10 @@ article .date{
     letter-spacing: 5px;
     float: left;
 }
-article h1{
+section h1{
     width: 100%;
     font-size: 150%;
+    font-weight:bold;
     color: #313131;
     letter-spacing: 3px;
     padding-bottom:2px;
@@ -171,7 +172,7 @@ article h1{
     margin-bottom: 15px;
     float: left;
 }
-article p{
+section p{
     font-size: 100%;
     color: #313131;
     letter-spacing: 3px;
@@ -179,7 +180,7 @@ article p{
     margin-bottom: 10px;
     float: left;
 }
-article .btn{
+section .btn{
     color: #fff;
     border: 1px solid orange;
     background-color: orange;
@@ -193,7 +194,7 @@ article .btn{
     overflow: hidden;
     float: right;
 }
-article .btn:hover{
+section .btn:hover{
     background-color: #fff;
     border: 1px solid orange;
     -webkit-transition: all 0.5s;
@@ -202,7 +203,7 @@ article .btn:hover{
     color: orange;
     overflow: hidden;
 }
- 
+
 footer{
     font-size: 80%;
     width: 100%;
@@ -215,4 +216,3 @@ footer address{
     color: #fff;
     letter-spacing: 5px;
 }
- 
