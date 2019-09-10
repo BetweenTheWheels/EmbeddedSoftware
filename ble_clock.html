@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+    
+    <title>Micro Controller World</title>
+    
+    <link rel="stylesheet" href="css/reset.css" type="text/css">
+    <link rel="stylesheet" href="css/index.css" />
+    
+  </head>
+  
+  <body>
+ 
+    <header>
+      <h1>micro:bit BLE Clock</h1>
+    </header>
+    
+    <div id="date_version">
+      <time>2019-9-10</time>
+    </div>
+    
+    <nav>
+      <ul>
+	<li><a href="#">Home</a></li>
+      <li><a href="#">Articles</a></li>
+      </ul>
+    </nav>
+
+    <section>
+      <article>
+	<h1>Display</h1>
+	
+	<div class="flex_test-box">
+	  <div class="flex_test-item">
+	    micro:bit has 5x5 LED matrix, but it is not good for displaying the time. I used the cheap character display LCD controlled via I2C. The LCD is <a href="http://akizukidenshi.com/catalog/g/gK-06795/" >AE-AQM0802</a>. The <a href="http://akizukidenshi.com/catalog/g/gK-06795/" >datasheet</a> is disclosed.
+	  </div>
+
+	  <div class="flex_test-item">
+	    <img src="AQM0802.jpg" width="200" height="133">
+	  </div>
+	</div>
+      </article>
+      
+      <article>
+	<h1>Time Syncronization by BLE</h1>
+
+	<div class="flex_test-box">
+	  <div class="flex_test-item">
+	    You need to set up the current time at the clock. micro:bit has 2 buttons, so you can use them to set the current time, but it is time consuming and boaring task. You need to check the current time by yourself and it will not be so accurate.<br><br>
+	    
+	    micro:bit has the BLE, and you have the smart phone which always has the (almost) accurate current time! So, I made the simple Android application sending the smart phone current time to micro:bit via BLE.<br><br>
+
+	    BLE UART service is used. This service sends only ASCII character as far as I investigated. Initially, I wanted to send the 4 byte long UNIX time, but this was not available. The Android application sends the smart phone current time in 24 hour format(e.g. 22:33:44) when clicking the "SYNCHRONIZE" button. The BLE Clock converts the received time to the linear time, because it is easy to increment the linear time every 1 second. <br><br>
+
+	    BLE UART service needs the delimiter to know the end of the string. The delimiter is the period, so the actual string sent by the smart phone is like "22:33:44.".
+	  </div>
+	  <div class="flex_test-item">
+	    <img src="AndroidApps.png" width="200" height="300">
+	  </div>
+	</div>
+      </article>
+
+      <article>
+	<h1>Time Accuracy</h1>
+
+	<p>
+	  The javaScript input.runningTime() shows how many milli second passes since it starts to run. I use this function to count the time, but this is not accurate at all unfortunately. It has the large error. For example, my micro:bit has 1 second delay every 5 minutes. This means that the BLE Clock has around 5 minutes delay in one day. This is not the clock any more.
+	</p>
+	<p>
+	  I should implement the calibration feature. The most simple way is to send the accurate current time again in a certain interval. The interval should be long enough, for example 30 minutes or 1 hour. The BLE Clock will know how much delay it has and calculate the calibration value. Every second the lenear time will be calibarated by this value.
+	</p>
+	<p>
+	  Here is the Javascript code. The key is that lTime is not changed. lTime is only incremented when 1 second passes based on the input.runningTime().
+	</p>
+
+	<pre>
+	  <code>
+let Start        // first runningTime when receiving the current time from the smart phone
+let newStart     // second runningTime when receiving the current time from the smart phone
+let zeroTime     // time 0 to start counting the second
+let lTime        // lenear time (second) converted from Hour:Minute:Second
+let oldlTime     // temporary copy of lTime for calculating the numerator
+let numerator    // time difference between lTime and oldTime
+let denominator  // time difference between Start and newStart in second unit
+let coeff        // calibration coefficient
+let Val          // temporary variable
+
+// When receiving the current time again
+        newStart = input.runningTime()
+             :
+             :
+        oldlTime = lTime
+        LinearTime()                                        // lTime is updated
+        numerator = lTime - oldlTime
+        denominator = Math.trunc((newStart - Start) / 1000)
+        coeff = (denominator + numerator) / denominator
+        lTime = oldlTime                                    // lTime is back. lTime itself shoule not be updated.
+
+// Evenry second, the linear time is displayed after calibrating the lTime by the following equation
+// Val is the correct time which will be displayed on the LCD
+        Val = Math.trunc(zeroTime + (lTime - zeroTime) * coeff)
+        Val = Val % 86400                                   // 86400 seconds = 24 hours
+	  </code>
+	</pre>
+      </article>
+
+      <article>
+	<h1>Time Tone</h1>
+	
+	<div class="flex_test-box">
+	  <div class="flex_test-item">
+	    In Japan, #117 provides the time tone service. This feature is enable when pushing 'B' button. At the bottom left of the LCD, 'T' is displayed to indicate this mode.<br><br>
+
+	    The time tone consists of 4 sound. The first 3 are 'La' (440Hz), the last is 1 octave higher 'La' (880Hz). When the second is 56, the tone starts to ring.<br><br>
+
+	    micro:bit supports the tone feature, so it is quite easy to ring this series of tone. The P0 and GND are connected to the speaker, you can hear the tone, but it is very small. I connected the amplifier to enlarge the tone. The amplifier is <a href="http://akizukidenshi.com/catalog/g/gK-08217/" >PAM8012</a>. Here is the the <a href="http://akizukidenshi.com/download/ds/diodeinc/PAM8012.pdf" >datasheet</a>.
+	  </div>
+	  <div class="flex_test-item">
+	    <img src="La.png" width="400" height="200">
+	  </div>
+	</div>
+      </article>
+
+    </section>
+    
+    <footer>
+      <address>By Saburo Haga</address>
+    </footer>
+    
+  </body>
+</html>
+
+
