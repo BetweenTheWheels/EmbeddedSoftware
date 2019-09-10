@@ -1,64 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="robots" content="noindex">
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
- 
-  <title>Micro Controller World</title>
- 
-  <link rel="stylesheet" href="css/reset.css" type="text/css">
-  <link rel="stylesheet" href="css/index.css" />
- 
-</head>
- 
-<body>
- 
-  <header>
-    <h1>Embedded Software Programming</h1>
-  </header>
- 
-  <div id="date_version">
-    <time>2019-8-31</time>
-  </div>
- 
-  <nav>
-    <ul>
-      <li><a href="#">Home</a></li>
-    </ul>
-  </nav>
-
-  <article>
-    <section>
-      <span class="date">
-	<time>2019-8-31</time>
-      </span>
-      
-      <h1>micro:bit BLE Clock</h1>
-      
-      <p>
-	This project makes the digital clock. The key clock feature is the time synchronization. In general, the digital clock has the button to synchronize the current time. You should push this button many times to set the current time, but this is a boaring task. micro:bit has the BLE feature. So, this project makes use of BLE to synchroniza the current time. 
-      </p>
-      <p>
-	micro:bit has 5x5 LED which can be the clock display, but it is painful to identify the time shown in 5x5 LED. I connected the tiny character LCD, AQM0802. This is controlled vi I2C.
-      </p>
-      <p>
-	I also connected the speaker. micro:bit is easy to make the sound. The micro:bit BLE Clock sounds the time signal every minute. Below is the schematic.
-      </p>
-
-      <img src="BLE_Clock_V1_bb.png">
-      
-    </section>
-
-
+  <head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
     
-  </article>
-
+    <title>Micro Controller World</title>
+    
+    <link rel="stylesheet" href="css/reset.css" type="text/css">
+    <link rel="stylesheet" href="css/index.css" />
+    
+  </head>
   
-  <footer>
-    <address>By Saburo Haga</address>
-  </footer>
+  <body>
  
-</body>
+    <header>
+      <h1>Embedded Software Programming</h1>
+    </header>
+    
+    <div id="date_version">
+      <time>2019-8-31</time>
+    </div>
+    
+    <nav>
+      <ul>
+	<li><a href="#">Home</a></li>
+      <li><a href="#">Articles</a></li>
+      </ul>
+    </nav>
+
+    <section>
+      <article>
+	<span class="date">
+	  <time>2019-8-31</time>
+	</span>
+	
+	<a href=ble_clock.html> <h1>micro:bit BLE Clock</h1> </a>
+      </article>
+
+    </section>
+    
+    <footer>
+      <address>By Saburo Haga</address>
+    </footer>
+    
+  </body>
 </html>
- 
+
