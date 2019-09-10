@@ -1,10 +1,10 @@
-
+@charset "utf-8";
 /* CSS Document */
 
 body{
 /*    font-family: calibri;*/
 /*font-family: 'Hiragino Kaku Gothic Pro','ヒラギノ角ゴ Pro W3','メイリオ',Meiryo,'ＭＳ Ｐゴシック',sans-serif;*/
-font-family: Quicksand, 游ゴシック体, "Yu Gothic", YuGothic, "ヒラギノ角ゴシック Pro", "Hiragino Kaku Gothic Pro", メイリオ, Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+font-family: Verdana, sans-serif, Quicksand, 游ゴシック体, "Yu Gothic", YuGothic, "ヒラギノ角ゴシック Pro", "Hiragino Kaku Gothic Pro", メイリオ, Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic";
 /*font: 14px/1.6 "Hiragino Kaku Gothic Pro",Osaka,"メイリオ","ＭＳ Ｐゴシック","MS PGothic",Verdana,Arial,sans-serif;*/
 margin:0;
 color:#313131;
@@ -37,7 +37,7 @@ a:hover {
 /*****HEADER*****/
 header{
     display: block;
-    width:80%;
+    width:60%;
     margin-left: 20%;
     overflow: hidden;
 }
@@ -132,24 +132,29 @@ nav li:hover{
 }
 
 /*****ARTICLE*****/
-article{
+section{
     display: block;
-    width: 80%;
-    margin: 20px auto;
+    width: 100%;
+/*    margin: 20px auto;*/
+    margin-left: 50px;
     overflow: hidden;
 }
-section{
-    width: calc(100% - 10px);
-    padding: 2.5%;
-    margin-bottom: 30px;
+article{
+    font-size: 100%;
+    /*width: calc(90% - 10px);*/
+    width: 80%;
+    padding: 2%;
+    margin-bottom: 20px;
     background-color: #f9f9f9;
     overflow: hidden;
     float: left;
 }
-section:nth-child(2n){
+/*
+article:nth-child(2n){
     margin-left: 30px;
 }
-section .date{
+*/
+article .date{
     font-size: 60%;
     color: orange;
     border: 1px solid orange;
@@ -160,27 +165,31 @@ section .date{
     letter-spacing: 5px;
     float: left;
 }
-section h1{
+article h1{
     width: 100%;
     font-size: 150%;
     font-weight:bold;
     color: #313131;
     letter-spacing: 3px;
     padding-bottom:2px;
-    padding-top: 10px;
+    padding-top: 5px;
     border-bottom: 1px solid #ababab;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
     float: left;
 }
-section p{
+article p{
     font-size: 100%;
     color: #313131;
-    letter-spacing: 3px;
-    line-height: 200%;
-    margin-bottom: 10px;
-    float: left;
+    /*letter-spacing: 3px;*/
+    /*line-height: 200%;*/
+    padding:  10px;            /* 余白指定 */
+    margin-left: 10px;
+    margin-bottom: 5px;
+/*    float: left;*/
+    clear: both;
 }
-section .btn{
+
+article .btn{
     color: #fff;
     border: 1px solid orange;
     background-color: orange;
@@ -194,7 +203,7 @@ section .btn{
     overflow: hidden;
     float: right;
 }
-section .btn:hover{
+article .btn:hover{
     background-color: #fff;
     border: 1px solid orange;
     -webkit-transition: all 0.5s;
@@ -215,4 +224,22 @@ footer{
 footer address{
     color: #fff;
     letter-spacing: 5px;
+}
+
+article .flex_test-box {
+    background-color: #f9f9f9;  /* 背景色指定 */
+    padding:  10px;            /* 余白指定 */
+    display: flex;              /* フレックスボックスにする */
+}
+article .flex_test-item {
+    padding: 10px;
+    color:  #313131;               /* 文字色 */
+    /*margin:  10px;*/              /* 外側の余白 */
+    /*border-radius:  5px;*/        /* 角丸指定 */
+}
+
+code {
+    font-family: Consolas, Quicksand, sans-serif;
+    font-weight:bold;
+    color:  #3131a7;               /* 文字色 */
 }
