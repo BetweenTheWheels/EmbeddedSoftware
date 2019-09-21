@@ -19,12 +19,12 @@
     </header>
     
     <div id="date_version">
-      <time>2019-9-10</time>
+      <time>2019-9-21</time>
     </div>
     
     <nav>
       <ul>
-	<li><a href="#">Home</a></li>
+	<li><a href="index.html">Home</a></li>
       <li><a href="#">Articles</a></li>
       </ul>
     </nav>
@@ -114,9 +114,9 @@ let Val          // temporary variable
 	  <div class="flex_test-item">
 	    In Japan, #117 provides the time tone service. This feature is enable when pushing 'B' button. At the bottom left of the LCD, 'T' is displayed to indicate this mode.<br><br>
 
-	    The time tone consists of 4 sound. The first 3 are 'La' (440Hz), the last is 1 octave higher 'La' (880Hz). When the second is 56, the tone starts to ring.<br><br>
+	    The time tone consists of 4 sound. The first 3 are 'La' (440Hz), the last is 1 octave higher 'La' (880Hz). When the time is 56 second, the tone starts to ring.<br><br>
 
-	    micro:bit supports the tone feature, so it is quite easy to ring this series of tone. The P0 and GND are connected to the speaker, you can hear the tone, but it is very small. I connected the amplifier to enlarge the tone. The amplifier is <a href="http://akizukidenshi.com/catalog/g/gK-08217/" >PAM8012</a>. Here is the the <a href="http://akizukidenshi.com/download/ds/diodeinc/PAM8012.pdf" >datasheet</a>.
+	    micro:bit supports the tone feature, so it is quite easy to ring this series of tone. If the P0 and GND are directly connected to the speaker, you can hear the tone, but it is very small. I connected the amplifier to enlarge the tone. The amplifier is <a href="http://akizukidenshi.com/catalog/g/gK-08217/" >PAM8012</a>. Here is the the <a href="http://akizukidenshi.com/download/ds/diodeinc/PAM8012.pdf" >datasheet</a>.
 	  </div>
 	  <div class="flex_test-item">
 	    <img src="La.png" width="400" height="200">
@@ -124,6 +124,48 @@ let Val          // temporary variable
 	</div>
       </article>
 
+      <article>
+	<h1>Schematic</h1>
+	
+	<img src="BLE_Clock_V1_bb.png" width="1000" height="500">
+
+      </article>
+
+      <article>
+	<h1>Source Code</h1>
+	<p>
+	  This is the javascript code. You will be able to copy this code to your project.
+	</p>
+	<object data="ble-clock-v1.js" width="1000" height="400" hspace="100" vspace="0"></object>
+      </article>
+
+      <article>
+	<h1>Test Result</h1>
+	<p>
+	  The main problem is the accuracy. After calibration was done (the calibration interval is a few hours), I left the BLE Clock for a long time to check how much difference from the actual time.
+	</p>
+	<p>
+	  The BLE Clock started 3:00 PM 9/8/2019. At 11:00 AM 9/21, it was 1 minute 5 second faster than the actual time. This means the error is 211 mili-second per Hour. Let's say that 1 minute faster per 10 days. This is not too bad, however, 1 month later, you will be aware of 3 minutes difference.
+	</p>
+	<p>
+	  I evaluated the power consumption. If the time tone is disable, the overall system consumes 2.2 mA. The AA battery has approximately 3000mAH capacity. If 2 pieces AA batteries are connected, the BLE Clock works around 1500 hours. This is about 60 days. Every 2 months, you need to change the battery. Well, you don't want to use this clock.
+	</p>
+	<p>
+	  If the average current is low, the battery capacity will be bigger. Less current, more battery life. I don't have the exact data of battery capacity if the averae current is less than 1 mA, but let's say 4000mAH. If the BLE Clock needs to work at least 1 year, the average current should be less than 450 micro A. The LCD consumes 150 micro A, so the main CPU should be less than 300 micro A. 
+	</p>
+	<p>
+	  Let's try to reduce the power consumption.
+	</p>
+<p>
+	<a href="./AQM0802.jpg" download>画像を保存</a>
+</p>
+
+<p>
+	<img src="./AQM0802.jpg" width="120" height="120">
+</p>
+
+      </article>
+      
     </section>
     
     <footer>
