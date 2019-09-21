@@ -51,7 +51,7 @@
 	  <div class="flex_test-item">
 	    You need to set up the current time at the clock. micro:bit has 2 buttons, so you can use them to set the current time, but it is time consuming and boaring task. You need to check the current time by yourself and it will not be so accurate.<br><br>
 	    
-	    micro:bit has the BLE, and you have the smart phone which always has the (almost) accurate current time! So, I made the simple Android application sending the smart phone current time to micro:bit via BLE.<br><br>
+	    micro:bit has the BLE, and you have the smart phone which always has the (almost) accurate current time! So, I made the <a href="./ble_clock.apk" download>simple Android application</a> sending the smart phone current time to micro:bit via BLE.<br><br>
 
 	    BLE UART service is used. This service sends only ASCII character as far as I investigated. Initially, I wanted to send the 4 byte long UNIX time, but this was not available. The Android application sends the smart phone current time in 24 hour format(e.g. 22:33:44) when clicking the "SYNCHRONIZE" button. The BLE Clock converts the received time to the linear time, because it is easy to increment the linear time every 1 second. <br><br>
 
@@ -61,12 +61,6 @@
 	    <img src="AndroidApps.png" width="200" height="300">
 	  </div>
 	</div>
-	<p>
-	  <a href="./ble_clock.apk" download>画像を保存</a>
-	</p>
-	<p>
-	  <img src="./AQM0802.jpg" width="120" height="120">
-	</p>
       </article>
 
       <article>
