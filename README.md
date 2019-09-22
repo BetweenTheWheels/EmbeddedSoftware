@@ -1,2 +1,2 @@
-# micro-bit
-various micro:bit projects
+# Embedded Software Programming
+Micro controller embedded program examples
