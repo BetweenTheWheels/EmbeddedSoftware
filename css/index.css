@@ -205,7 +205,11 @@ article .flex_test-item {
     /*border-radius:  5px;*/        /* 角丸指定 */
 }
 
-
+code {
+    font-size: 120%;
+    font-weight:bold;
+    color: #003399;
+}   
 
 
 /*****NAV*****/
