@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+    
+    <title>Micro Controller World</title>
+    
+    <link rel="stylesheet" href="css/reset.css" type="text/css">
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/shCoreDefault.css"/>
+    <script type="text/javascript" src="scripts/shCore.js"></script>    
+    <script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+  </head>
+  
+  <body>
+ 
+    <header>
+      <h1>BLE Nano V2 Clock</h1>
+    </header>
+    
+    <div id="date_version">
+      <time>2019-11-9</time>
+    </div>
+    
+    <nav>
+      <li><a href="index.html">HOME</a></li>
+      <li><a href="#">Articles</a>
+	<ul>
+          <li><a href="ble_clock.html">micro:bit BLE Clock</a></li>
+          <li><a href="nano_clock.html">BLE Nano V2 Clock</a></li>
+	</ul>
+      </li>
+    </nav>
+
+    <div class="photo_ble_clock">
+      <img src="nano_clock_system.jpg" width="500" height="400">
+    </div>
+    
+    <section>
+      <article>
+	<h1>Low Power Consumption</h1>
+	
+	<div class="flex_test-box">
+	  <div class="flex_test-item">
+	    BLE Nano integrates the Nordic nRF52832. This is the most popular BLE chip in the market. It also has the great low power mode which can be used in Arduino environment. The current can be down to about 10 &mu;A. The LCD current is about 150 &mu;A, so the total current is about 160 &mu;A. <br><br>
+
+	    The code utilizes pfod_lp_nrf52 library. This was developed by <a href="http://www.protectyoursuper.com.au/pfod/BLE/LowPower/index.html"> Forward Computing and Control Pty. Ltd.</a> This is the excellent library, because you can easily achieve the nRF52832 low power consumption. But it has the limitation. <br><br>
+
+	    Please refer to the source code below. Before running sleep() function, the code waits for the minute boundary, because it wants to sleep 1 minute and display the time every 1 minute. In this stage, the current is around 6 mA. Once 0 second is detected, it displays the time and immediately goes to sleep. In this stage, the current goes down to about 160 &mu;A. Yes, it can achieve the low power consumption. When the 1 minute timer is expired, it updates the timw and goes to sleep again. However, the current does not stay at 160 &mu;A. The current fluctuates between 160 and 210 &mu;A. So, something is running. I just wrote another code removing the BLE function and confirmed that the current stayed at 160 &mu;A, even though the BLE Nano goes in and out of the sleep. It seems that BLE Nano starts advertising after woken up, even though the code terminates the BLE by ble.close(), because BLE Nano is the BLE module. <br><br>
+	  </div>
+
+	</div>
+      </article>
+
+      <article>
+	<h1>Display</h1>
+	
+	<div class="flex_test-box">
+	  <div class="flex_test-item">
+	    BLE Nano V2 does not have any display. It is just the BLE module. I used the cheap character display LCD controlled via I2C. The LCD is <a href="http://akizukidenshi.com/catalog/g/gK-06795/" >AE-AQM0802</a>. The <a href="http://akizukidenshi.com/catalog/g/gK-06795/" >datasheet</a> is disclosed.
+	  </div>
+
+	  <div class="flex_test-item">
+	    <img src="AQM0802.jpg" width="200" height="133">
+	  </div>
+	</div>
+      </article>
+      
+      <article>
+	<h1>Time Syncronization by BLE</h1>
+
+	<div class="flex_test-box">
+	  <div class="flex_test-item">
+	    As same as micro:bit BLE clock, BLE UART service is used to set the current time. As mentioned in the section of "Low Power Consumption", pfod_lp_nrf52 library is used, and this library provides the BLE Serial service. This service sends both ASCII character and binary. As for the easy debugging, the <a href="./nRF52832 ble_clock.apk" download>simple Android application</a> sends the current time as the ASCII code. The Android application sends the date and time, but the BLE Nano code shows only Hour:Minute. <br><br>
+
+	    BLE UART service needs the delimiter to know the end of the string. The delimiter is the period, so the actual string sent by the Android application is like "190101 22:33:44.".
+	  </div>
+	  <div class="flex_test-item">
+	    <img src="AndroidApps_2.png" width="200" height="300">
+	  </div>
+	</div>
+      </article>
+
+      <article>
+	<h1>Time Accuracy</h1>
+
+	<div class="flex_test-box">
+	  <div class="flex_test-item">
+	    BLE Nano V2 integrates 32.768KHz crystal. The lp_timer library uses this clock, so the time accuracy must be very good. But, as far as I tested, the clock runs fast 200 mili second per hour. The code has the calibration that 1 minute is reduced every 300 hours.<br><br>
+	  </div>
+	</div>
+
+      </article>
+
+      <article>
+	<h1>Schematic</h1>
+	
+	<img src="BLE_Nano_Clock_bb.png" width="840" height="690">
+
+      </article>
+
+      <article>
+	<h1>Source Code</h1>
+	<p>
+	  This is the Arduino code. You will be able to copy this code to your project.
+	</p>
+	<pre class="brush:js">
+#include &lt;time.h>
+#include &lt;lp_timer.h>
+#include &lt;Wire.h>
+#include &lt;SPI.h>
+#include &lt;lp_BLESerial.h>
+
+
+
+lp_timer clockTimer;
+const unsigned long DELAY_TIME = 60000; // mS == 1 minute
+unsigned char lcd_address = 0x3e; // LCD Slave address
+
+
+time_t tim;    // current date & time
+
+lp_BLESerial ble;
+
+
+
+/************************************************
+    AQM0802 LCD Control
+*************************************************/
+
+/* LCD Write Command */
+int i2cwritecmd(byte cmd){
+	Wire.beginTransmission(lcd_address);
+	Wire.write((byte)0x00); 
+	Wire.write(cmd);
+	return Wire.endTransmission();
+}
+
+/* LCD Write Data */
+int i2cwritedata(byte data){
+	Wire.beginTransmission(lcd_address);
+	Wire.write(0x40);
+	Wire.write(data);
+	return Wire.endTransmission();
+}
+
+/* LCD Initialization */
+void init_lcd(void){
+	delay(145);
+	i2cwritecmd(0x38);delay(1); // 
+	i2cwritecmd(0x39);delay(1); // Extendedn mode command
+	i2cwritecmd(0x14);delay(1); // Frequency
+	i2cwritecmd(0x72);delay(1); //Contrast
+	i2cwritecmd(0x56); // Booster off, the voltage is 3.3V
+	delay(1);
+	i2cwritecmd(0x6c);delay(300); // Follower Control
+	i2cwritecmd(0x38);delay(1); // Normal mode
+	i2cwritecmd(0x0C);delay(1); // Display on
+	i2cwritecmd(0x01);delay(2); // Clear screen
+}
+
+void showTime(char *t ){
+
+	int len, i;
+
+	i2cwritecmd(0x80);
+
+	len = strlen( t );
+	for( i=0; i&lt;len; i++ )
+		i2cwritedata( t[i] );
+		
+}
+
+
+void setup() {
+	struct tm now;
+	int ch, count;
+	char recv[20], w;
+	char fixed=0;
+	unsigned long sec, sec_zero;
+	char clock[8];
+	
+	/* Enable Serial for debug port */
+	Serial.begin(115200);
+	/* I2C, LCD Initialization */
+	Wire.begin();
+	init_lcd();
+
+	ble.setName("BLE Clock"); // set advertised name, default name is "Nordic BLE UART"
+	ble.setAdvertisingInterval(1000);
+	ble.begin(); // start advertising and be ready to accept connections
+
+
+	count = 0;
+	while( !fixed ){
+		while (ble.available() ) {
+			ch = ble.read();
+			recv[count++] = (char)ch;
+			if( count==14 && recv[count-1]=='.' ){
+				Serial.println( "Maybe, current time received." );
+				Serial.println( recv );
+
+				w = (recv[0]-'0')*10 + (recv[1]-'0');
+				now.tm_year = w + 100; // since 1900
+				w = (recv[2]-'0')*10 + (recv[3]-'0');
+				now.tm_mon = w - 1; // Month needs -1
+				now.tm_mday = (recv[4]-'0')*10 + (recv[5]-'0');
+				now.tm_hour = (recv[7]-'0')*10 + (recv[8]-'0');
+				now.tm_min = (recv[9]-'0')*10 + (recv[10]-'0');
+				now.tm_sec = (recv[11]-'0')*10 + (recv[12]-'0');
+
+				tim = mktime(&now);
+				sec = millis();
+				sec_zero = now.tm_sec;
+				
+				Serial.end();
+				ble.close();
+				fixed = 1;
+				break;
+			}
+		}	
+	}
+
+	strftime( clock, sizeof(clock),"%H:%M", &now );
+	showTime( clock );
+	
+	while( 1 ){
+		if( millis() - sec >= 1000 ){
+			tim++;
+			sec_zero++;
+			if( sec_zero == 60 )
+				break;
+
+			sec += 1000;
+		}
+		
+	}
+	
+	clockTimer.startTimer( DELAY_TIME, handleMinute );
+}
+
+void loop() {
+
+	struct tm *nowj;
+	char clock[20];
+	time_t work;
+	time_t c_tim;
+	
+	work = tim - i_tim;
+	c_tim = tim - ( work / 1080000) * 60;
+
+	nowj = localtime( &c_tim );
+	strftime( clock, sizeof(clock),"%H:%M", nowj );
+	showTime( clock );
+
+	sleep(); // just sleep here waiting for the timer to trigger
+
+}
+ 
+void handleMinute()
+{
+	tim += 60;
+}
+	</pre>	
+      </article>
+
+      <article>
+	<h1>Power Efficiency</h1>
+	<p>
+	  As shown in the source code, after the time synchronization is done, the code terminates the Serial and BLE, so the current is reduced, however still BLE Nano does not go to the sleep mode, the current is also still high. After detecting the 1 minute boundary, BLE Nano goes to the sleep mode, so the current is reduced drastically.
+	</p>
+	<p>
+	  I measured the power consumption input and output of the DC-DC converter NC1402. INA219 board was used. The measurement frequency is 50Hz.
+	</p>
+	
+	<div class="table_power">
+	  <img src="BLE_Nano_power_efficiency.png" width="928" height="160">
+	</div>
+
+	<div class="flex_test-box">
+	  <div class="flex_test-item">
+	    The efficiency is not good especially after sleep. More than 37% energy is lost. Yes, this is terrible. BLE Nano low power operation has no meaning. NCP1402 has PFM operation which is good at the low load operation, but probably the output current 0.1624 mA is too low. If 47&mu;H inductor is replaced with larger one, the efficieny may be improved.
+	  </div>
+
+	  <div class="flex_test-item">
+	    <img src="NCP1402_Board.png" width="450" height="165">
+	  </div>
+	</div>
+
+	<p>
+	  Below is the current vs. time plot. The left is input current to NCP1402, the right is the output current from NCP1402. Since there is only 1 INA219 board, these 2 plots were measured at the different time, so the current peaka are not corresponding. As mentioned in "Low power Consumption" section, BLE Nano is runinig even in the sleep mode. The digital multi meter cannot follow the faster frequency behavir, that is why it shows the current between 160 and 210 &mu;A, but INA219 revealed that BLE Nano consumes more power in a very short period of time. 
+	</p>
+	
+	<div class="current">
+	  <img src="nano_clock_current.png" width="1000" height="300">
+	</div>
+
+      </article>
+      
+    </section>
+    
+    <footer>
+      <address>By Saburo Haga</address>
+    </footer>
+    
+  </body>
+</html>
+
+
