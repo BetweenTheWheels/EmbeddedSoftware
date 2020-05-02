@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+    
+    <title>Micro Controller World</title>
+    
+    <link rel="stylesheet" href="css/reset.css" type="text/css">
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/shCoreDefault.css"/>
+    <script type="text/javascript" src="scripts/shCore.js"></script>    
+    <script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+  </head>
+  
+  <body>
+ 
+    <header>
+      <h1>STM8S103 Temperature Monitor</h1>
+    </header>
+    
+    <div id="date_version">
+      <time>2020-5-2</time>
+    </div>
+    
+    <nav>
+      <li><a href="index.html">HOME</a></li>
+      <li><a href="#">Articles</a>
+	<ul>
+          <li><a href="ble_clock.html">micro:bit BLE Clock</a></li>
+          <li><a href="nano_clock.html">BLE Nano V2 Clock</a></li>
+          <li><a href="stm8s_temp.html">STM8S103 Temperature Monitor</a></li>
+	</ul>
+      </li>
+    </nav>
+
+    <div class="photo_ble_clock">
+      <img src="stm8s_temp.jpg" width="300" height="300">
+    </div>
+    
+    <section>
+      <article>
+	<h1>7 Segment LED</h1>
+	
+	<div class="flex_test-box">
+	  <div class="flex_test-item">
+	    The 7 sement LED is mainly used for displayig the numeric. <br><br>
+
+	    KD3631BU is the anode common 3 digits LED. 3 LED cathode is connected with each other. So, the MCU needs to drive the LED in the time division manner. <br><br>
+
+	    The red LED Vf is around 1.8V. The anode is driven by 3.3V, the current limit resistor is 620 ohm, so the current is around 2.4mA. The brightness is low. <br><br>
+	  </div>
+
+	  <div class="flex_test-item">
+	    <img src="KD3631BU.jpg" width="550" height="225">
+	  </div>
+
+	</div>
+      </article>
+
+      <article>
+	<h1>Power Consumption</h1>
+
+	<div class="flex_test-box">
+	  <div class="flex_test-item">
+	    STM8S103 breakout board has 3.3V LDO. The micro USB connector is soldered which is for only the 5V power supply.<br><br>
+
+	    The measured power consumption is 6.76 mA @ 5.09V. 34.4 mW. <br><br>
+	  </div>
+	  <div class="flex_test-item">
+	    <img src="STM8S103F3P6_Breakout.jpg" width="260" height="220">
+	  </div>
+	</div>
+      </article>
+
+      <article>
+	<h1>Temperature Accuracy</h1>
+
+	<div class="flex_test-box">
+	  <div class="flex_test-item">
+	    Microchip MCP9700 is used. The accuracy described in the datasheet is typically &plusmn;2°C. 10mV output difference is equal to 1°C. STM8S103 ADC resolution is only 10bit. STM8S103 breakout board LDO (AMS1117) generates 3.21V. 1LSB is 3.13 mV. The ADC error is typically 1.6 LSB, the worst case is 3.5 LSB @ 2MHz ADC clock. As far as i investigated the sduino source code, the internal clock source 16MHz is divided by 8, so probably the ADC clock is 2MHz. The worst case ADC error exceeds 10mV. In order to minimize the ADC error, the MCP9700 voltage measurement is averaged by 4 times ADC measurement. <br><br>
+
+	    MCP9700 has not the linear response to the temperature. The application note "IC Temperature Sensor Accuracy Compensation with a PIC<sup>&reg;</sup> Microcontroller" intorduces the 1st and 2nd order accuracy compensation. I implemented below equation. <br><br>
+
+	    <i>
+	      T<font size="2"><sub>compensated</sub></font> = T<font size="2"><sub>sensor</sub></font> - Error<font size="2"><sub>T_2</sub></font>|<font size="2"><sub>T<font size="1"><sub>A</sub></font> = T<font size="1"><sub>sensor</sub></font></sub></font> <br><br>
+	      
+	      Error<font size="2"><sub>T_2</sub></font> = EC<font size="2"><sub>2</sub></font>(125°C – T<font size="2"><sub>A</sub></font>)(T<font size="2"><sub>A</sub></font> – –40°C)<br>
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	      + EC<font size="2"><sub>1</sub></font>(T<font size="2"><sub>A</sub></font> – –40°C)<br>
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	      + Error<font size="2"><sub>-40</sub></font><br><br>
+	      
+	      Where:<br>
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	      EC2 = -244 x 10<font size="2"><sup>-6</sup></font>°C/°C<font size="2"><sup>2</sup></font><br>
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	      EC1 = 2 x 10<font size="2"><sup>-12</sup></font>°C/°C &#x2248; 0 °C/°C<br>
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	      Error<font size="2"><sub>-40</sub></font> = 2°C
+</i>
+	    
+	    
+	  </div>
+	  <div class="flex_test-item">
+	    <img src="MCP9700.png" width="153" height="400">
+	  </div>
+	</div>
+
+      </article>
+
+      <article>
+	<h1>Schematic</h1>
+	
+	<img src="stm8s_7seg_schematic.png" width="720" height="720">
+
+      </article>
+
+      <article>
+	<h1>Source Code</h1>
+	<p>
+	  This is the Arduino code. You will be able to copy this code to your project.
+	</p>
+	<pre class="brush:js">
+#define TEMPPERIOD (200*10) // 1 cycle is 5msec, 5msec * 200 * 10 = 10sec
+#define VCC        321 // 3.21V
+#define SENSOR     A0
+
+#define FLOAT_IMPLEMENTATION
+
+
+int dig1 = 2;
+int dig2 = 7;
+int dig3 = 5;
+
+int portA = 1;
+int portB = 3;
+int portC = 9;
+int portD = 14;
+int portE = 15;
+int portF = 4;
+int portG = 8;
+
+int portDP = 10;
+
+
+byte sevenSeg[11] = {~0xFC, ~0x60, ~0xDA, ~0xF2, ~0x66, ~0xB6, ~0xBE, ~0xE0, ~0xFE, ~0xF6, ~0x02 };
+int  pin[8];
+int  anode[3];
+
+#define AVGNUM 8
+int32_t avg[AVGNUM];
+byte    avg_ptr=0;
+byte    first=1;
+
+#if defined(FLOAT_IMPLEMENTATION)
+float temperature;
+#endif
+
+volatile unsigned char reg;
+void AWU_IRQHandler(void) __interrupt(ITC_IRQ_AWU)
+{
+	reg = AWU->CSR;     // Reading AWU_CSR1 register clears the interrupt flag.
+}
+
+
+void setup()
+{
+	
+	pinMode( dig1, OUTPUT );
+	pinMode( dig2, OUTPUT );
+	pinMode( dig3, OUTPUT );
+
+	pinMode( portA, OUTPUT );
+	pinMode( portB, OUTPUT );
+	pinMode( portC, OUTPUT );
+	pinMode( portD, OUTPUT );
+	pinMode( portE, OUTPUT );
+	pinMode( portF, OUTPUT );
+	pinMode( portG, OUTPUT );
+	pinMode( portDP, OUTPUT );
+
+	pin[7] = portA;
+	pin[6] = portB;
+	pin[5] = portC;
+	pin[4] = portD;
+	pin[3] = portE;
+	pin[2] = portF;
+	pin[1] = portG;
+
+	anode[0] = dig1;
+	anode[1] = dig2;
+	anode[2] = dig3;
+
+	// Set AWU Timer
+	// APR:0 => 2, TBR:0x8 => 2**7, 128 * 2 / 128KHz = 2 msec
+	AWU->APR = 0; 
+	AWU->TBR = 0x8;
+}
+
+void loop()
+{
+	int i;
+	int32_t volt;
+	static int a_n=0;
+	static int count=0;
+	static byte temp[3];
+	
+	AWU->CSR = 0x10; // enable Active Halt mode
+	halt();
+
+	for( i=7; i>0; i-- ){
+		digitalWrite( pin[i], (sevenSeg[temp[a_n]]>>i)&0x1 );
+	}
+	if( a_n == 1 )
+		digitalWrite( portDP, LOW );
+	else
+		digitalWrite( portDP, HIGH );
+		
+	digitalWrite( anode[a_n], HIGH );
+	delay( 3 ); // 3msec
+	digitalWrite( anode[a_n], LOW );
+	a_n++;
+	a_n %= 3;
+
+	if( --count<=0 ){
+		volt = 0;
+		for( i=0; i&lt;4; i++ )
+			volt += (int32_t)analogRead( SENSOR );
+
+		volt = volt>>2;
+		volt = VCC*volt - 51200;
+
+		if( first==1 ){
+			for( i=0; i&lt;AVGNUM; i++ )
+				avg[i] = volt;
+			
+			first = 0;
+		}
+		else{
+			avg[avg_ptr++] = volt;
+			avg_ptr = avg_ptr % AVGNUM;
+		}
+
+		volt = 0;
+		for( i=0; i&lt;AVGNUM; i++ )
+			volt += avg[i];
+
+
+#if defined(FLOAT_IMPLEMENTATION)
+		temperature = (float)volt;
+		temperature /= 1024 * AVGNUM;
+		temperature -= -0.000244 * (125.0 - temperature)*(temperature + 40.0) + 2.0;
+		
+		if( temperature >= 0.0 ){
+			temp[0] = (int)temperature/10;
+			temp[1] = (int)temperature%10;
+			temp[2] = (int)(10*temperature)%10;
+		}
+		else{
+			temp[0] = 10; // '-'
+			temperature = (-1) * temperature;
+			temp[1] = (int)temperature%10;
+			temp[2] = (int)(10*temperature)%10;
+		}
+#else
+		volt = volt / AVGNUM;
+		if( volt >= 0 ){
+			temp[0] = (volt>>10)/10;
+			temp[1] = (volt>>10)%10;
+			temp[2] = ((10*volt)>>10)%10;
+		}
+		else{
+			temp[0] = 10; // '-'
+			volt = (-1) * volt;
+			temp[1] = (volt>>10)/10;
+			temp[2] = (volt>>10)%10;
+		}
+#endif
+
+		count = TEMPPERIOD;
+	}
+
+}
+	</pre>	
+      </article>
+
+    </section>
+    
+    <footer>
+      <address>By Saburo Haga</address>
+    </footer>
+    
+  </body>
+</html>
+
+
