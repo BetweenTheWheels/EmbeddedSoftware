@@ -112,9 +112,26 @@
       </article>
 
       <article>
+	<h1>LED Control</h1>
+
+	<div class="flex_test-box">
+	  <div class="flex_test-item">
+	    3 pcs 7 segment LEDs are integrated and cathoses are connected, so that I needed to turn on and off each LED in the time division manner. Each LED is turned on 3ms and tuened off 2ms, then the next LED is driven. <br><br>
+
+	    The PWM period is 15 ms. Each LED is turned on 3ms, so the PWM duty cycle is only 20%. <br><br>
+	    
+	    3ms is controled by delay() function, while 2ms is controlled by the STM8S103 AWU(Auto Wakeup Unit) timer. <br><br>
+	  </div>
+	  <div class="flex_test-item">
+	    <img src="LED_Control.png" width="500" height="365">
+	  </div>
+	</div>
+      </article>
+
+      <article>
 	<h1>Schematic</h1>
 	
-	<img src="stm8s_7seg_schematic.png" width="720" height="720">
+	<img src="stm8s_7seg_schematic.png" width="600" height="600">
 
       </article>
 
