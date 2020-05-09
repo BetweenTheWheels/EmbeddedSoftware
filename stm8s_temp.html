@@ -67,7 +67,9 @@
 	  <div class="flex_test-item">
 	    STM8S103 breakout board has 3.3V LDO. The micro USB connector is soldered which is for only the 5V power supply.<br><br>
 
-	    The measured power consumption is 6.76 mA @ 5.09V. 34.4 mW. <br><br>
+	    The measured power consumption is 6.76 mA @ 5.09V = 34.4 mW. <br><br>
+
+	    This is too much power consumption in case of the battery operation, but it is reasonably small in case of the line power.<br><br>
 	  </div>
 	  <div class="flex_test-item">
 	    <img src="STM8S103F3P6_Breakout.jpg" width="260" height="220">
@@ -138,8 +140,15 @@
       <article>
 	<h1>Source Code</h1>
 	<p>
-	  This is the Arduino code. You will be able to copy this code to your project.
+	  This is the Arduino code. You will be able to copy this code to your project.<br><br>
+
+	  The code uses sduino. The program size is shown below.<br>
 	</p>
+
+	<div class="flex_test-item">
+	  <img src="stm8s_7seg_prog_size.png" width="856" height="45">
+	</div>
+	
 	<pre class="brush:js">
 #define TEMPPERIOD (200*10) // 1 cycle is 5msec, 5msec * 200 * 10 = 10sec
 #define VCC        321 // 3.21V
